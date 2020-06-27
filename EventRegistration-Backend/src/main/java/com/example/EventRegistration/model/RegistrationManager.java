@@ -6,21 +6,20 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 @Entity
 public class RegistrationManager {
 	
-//	private int id;
-//	
-//	@Id
-//	public int getId() {
-//		return this.id;
-//	}
-//	
-//	public void setInt(int value) {
-//		this.id = value;
-//	}
+	private int id;
+	
+	@Id
+	public int getId() {
+		return this.id;
+	}
+	
+	public void setId(int value) {
+		this.id = value;
+	}
 	
 	private Set<Person> persons;
 	
@@ -48,7 +47,7 @@ public class RegistrationManager {
 	
 	private Set<CreditCard> creditCard;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
 	public Set<CreditCard> getCreditCard() {
 		return this.creditCard;
 	}
