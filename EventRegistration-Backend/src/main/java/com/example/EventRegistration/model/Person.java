@@ -8,13 +8,13 @@ public class Person {
 	
 	private String name;
 	
-	public void setName(String value) {
-		this.name = value;
-	}
-	
 	@Id
 	public String getName() {
 		return this.name;
+	}
+	
+	public void setName(String value) {
+		this.name = value;
 	}
 	
 }
