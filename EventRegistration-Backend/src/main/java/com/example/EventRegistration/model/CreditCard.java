@@ -13,9 +13,10 @@ public class CreditCard {
 		return this.accountNumber;
 	}
 	
-	public void setAccountNumber(String accountNumber) {
-		this.accountNumber = accountNumber;
+	public void setAccountNumber(String value) {
+		this.accountNumber = value;
 	}
+	
 	
 	
 	private float amount;
@@ -24,8 +25,8 @@ public class CreditCard {
 		return this.amount;
 	}
 	
-	public void setAmount(float amount) {
-		this.amount = amount;
+	public void setAmount(float value) {
+		this.amount = value;
 	}
 	
 }
