@@ -199,7 +199,25 @@ class TestPerson {
     }
     
     @Test
-    public void test_09_deletePerson_NonExistent() {
+    public void test_09_deletePerson_Null() {
+    	
+    	assertEquals(0, service.getAllPersons().size());
+        String name = null; 
+        String error = null;
+        
+        try {        	
+            service.deletePerson(name);
+            fail();
+        } catch (IllegalArgumentException e) {
+        	error = e.getMessage();
+        }
+        
+        assertEquals("Person name cannot be empty", error);
+          
+    }
+    
+    @Test
+    public void test_10_deletePerson_NonExistent() {
     	
     	assertEquals(0, service.getAllPersons().size());
         String name = "Non Existent Name"; 
