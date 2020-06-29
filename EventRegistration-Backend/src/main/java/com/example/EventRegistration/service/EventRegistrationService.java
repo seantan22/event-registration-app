@@ -39,7 +39,9 @@ public class EventRegistrationService {
 	public Person getPerson(String name) {
 		
 		if(name == null || name.trim().length() == 0 || name.replaceAll("//s", "").length() == 0 || name =="" ) {
-			throw new IllegalArgumentException("Please enter person name");
+			throw new IllegalArgumentException("Person name cannot be empty");
+		} else if (!personRepository.existsById(name)) {
+			throw new IllegalArgumentException("Person does not exist");
 		}
 		
 		Person person = personRepository.findByName(name);
@@ -56,7 +58,9 @@ public class EventRegistrationService {
 	public void deletePerson(String name) {
 		
 		if(name == null || name.trim().length() == 0 || name.replaceAll("//s", "").length() == 0 || name =="" ) {
-			throw new IllegalArgumentException("Please enter person name");
+			throw new IllegalArgumentException("Person name cannot be empty");
+		} else if (!personRepository.existsById(name)) {
+			throw new IllegalArgumentException("Person does not exist");
 		}
 		
 		Person person = personRepository.findByName(name);
