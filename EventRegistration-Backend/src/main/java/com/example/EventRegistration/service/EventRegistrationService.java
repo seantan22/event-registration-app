@@ -1,6 +1,8 @@
 package com.example.EventRegistration.service;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -81,6 +83,7 @@ public class EventRegistrationService {
 		personRepository.delete(person);
 		
 	}
+	
 	
 	
 	/*** ORGANIZER ***/
@@ -167,9 +170,48 @@ public class EventRegistrationService {
 		
 	}
 	
+	
+	
 	/*** EVENT ***/
 	
+	@Transactional
+	public Event buildEvent(Event event, String name, Date date, Time startTime, Time endTime, String description) {
+		
+		if(event == null) {
+			throw new IllegalArgumentException("Event cannot be empty");
+		} else if(name == null || name.trim().length() == 0) {
+			throw new IllegalArgumentException("Event name cannot be empty");
+		} else if(eventRepository.existsById(name)) {
+			throw new IllegalArgumentException("Event already exists");
+		} else if(date == null) {
+			throw new IllegalArgumentException("Event date cannot be empty");
+		} else if(startTime == null) {
+			throw new IllegalArgumentException("Event start time cannot be empty");
+		} else if(endTime == null) {
+			throw new IllegalArgumentException("Event end time cannot be empty");
+		} else if(endTime != null && startTime != null && endTime.before(startTime)) {
+			throw new IllegalArgumentException("Event end time cannot be before event start time");
+		}
+		
+		event.setName(name);
+		event.setDate(date);
+		event.setStartTime(startTime);
+		event.setEndTime(endTime);
+		event.setDescription(description);
+		
+		return event;
+		
+	}
 	
+	public Event createEvent(String name, Date date, Time startTime, Time endTime, String description) {
+		
+		Event event = new Event();
+		buildEvent(event, name, date, startTime, endTime, description);
+		eventRepository.save(event);
+		
+		return event;
+		
+	}
 	
 	/*** REGISTRATION ***/
 	
