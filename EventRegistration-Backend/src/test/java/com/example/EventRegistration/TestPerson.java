@@ -50,7 +50,7 @@ class TestPerson {
     }
     
     @Test
-    public void test_02_createPersonNull() {
+    public void test_02_createPerson_Null() {
     	
     	assertEquals(0, service.getAllPersons().size());
         String name = null;
@@ -68,7 +68,7 @@ class TestPerson {
     }
     
     @Test
-    public void test_03_createPersonDuplicate() {
+    public void test_03_createPerson_Duplicate() {
     	
     	assertEquals(0, service.getAllPersons().size());
         String name = "Duplicate Name";   
@@ -113,7 +113,7 @@ class TestPerson {
     }
     
     @Test
-    public void test_05_getPersonNull() {
+    public void test_05_getPerson_Null() {
     	
     	assertEquals(0, service.getAllPersons().size());
     	String name = null;
@@ -131,7 +131,7 @@ class TestPerson {
     }
     
     @Test
-    public void test_06_getNonExistentPerson() {
+    public void test_06_getPerson_NonExistent() {
     	
     	assertEquals(0, service.getAllPersons().size());
     	String name = "FirstName LastName";
@@ -199,7 +199,7 @@ class TestPerson {
     }
     
     @Test
-    public void test_09_deleteNonExistentPerson() {
+    public void test_09_deletePerson_NonExistent() {
     	
     	assertEquals(0, service.getAllPersons().size());
         String name = "Non Existent Name"; 
