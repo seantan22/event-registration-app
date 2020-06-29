@@ -299,6 +299,88 @@ public class EventRegistrationService {
 	
 	/*** REGISTRATION ***/
 	
+	@Transactional
+	public Registration createRegistration(Person person, Event event) {
+		
+		if(person == null) {
+			throw new IllegalArgumentException("Person must be selected");
+		} else if(!personRepository.existsById(person.getName())) {
+			throw new IllegalArgumentException("Person does not exist");
+		} else if(event == null) {
+			throw new IllegalArgumentException("Event must be selected");
+		} else if(!eventRepository.existsById(event.getName())) {
+			throw new IllegalArgumentException("Event does not exist");
+		} else if(registrationRepository.existsByPersonAndEvent(person, event)) {
+			throw new IllegalArgumentException("Person is already registered to this event");
+		}
+		
+		Registration registration = new Registration();
+		registration.setId(person.getName().hashCode() * event.getName().hashCode());
+		registration.setPerson(person);
+		registration.setEvent(event);
+		registrationRepository.save(registration);
+		
+		return registration;
+		
+	}
+	
+	@Transactional
+	public Registration getRegistrationByPersonAndEvent(Person person, Event event) {
+		
+		if(person == null) {
+			throw new IllegalArgumentException("Person must be selected");
+		} else if(!personRepository.existsById(person.getName())) {
+			throw new IllegalArgumentException("Person does not exist");
+		} else if(event == null) {
+			throw new IllegalArgumentException("Event must be selected");
+		} else if(!eventRepository.existsById(event.getName())) {
+			throw new IllegalArgumentException("Event does not exist");
+		}
+		
+		Registration registration = registrationRepository.findByPersonAndEvent(person, event);
+		
+		return registration;
+	
+	}
+	
+	@Transactional
+	public List<Registration> getAllRegistrations() {
+		return toList(registrationRepository.findAll());
+	}
+	
+	@Transactional
+	public List<Registration> getRegistrationsByPerson(Person person){
+		
+		if(person == null) {
+			throw new IllegalArgumentException("Person must be selected");
+		} else if(!personRepository.existsById(person.getName())) {
+			throw new IllegalArgumentException("Person does not exist");
+		}
+		
+		List<Registration> registrationsByPerson = registrationRepository.findByPerson(person);
+		
+		return registrationsByPerson;
+		
+	}
+	
+	@Transactional
+	public void deleteRegistration(Person person, Event event) {
+		
+		if(person == null) {
+			throw new IllegalArgumentException("Person must be selected");
+		} else if(!personRepository.existsById(person.getName())) {
+			throw new IllegalArgumentException("Person does not exist");
+		} else if(event == null) {
+			throw new IllegalArgumentException("Event must be selected");
+		} else if(!eventRepository.existsById(event.getName())) {
+			throw new IllegalArgumentException("Event does not exist");
+		}
+		
+		Registration registration = registrationRepository.findByPersonAndEvent(person, event);
+		
+		registrationRepository.delete(registration);
+	}
+	
 	
 	
 	/*** CREDIT CARD ***/
