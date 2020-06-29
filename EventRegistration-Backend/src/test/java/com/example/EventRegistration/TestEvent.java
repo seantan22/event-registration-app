@@ -18,7 +18,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.example.EventRegistration.dao.EventRepository;
+import com.example.EventRegistration.dao.OrganizerRepository;
 import com.example.EventRegistration.model.Event;
+import com.example.EventRegistration.model.Organizer;
 import com.example.EventRegistration.service.EventRegistrationService;
 
 @ExtendWith(SpringExtension.class)
@@ -29,10 +31,14 @@ public class TestEvent {
 	private EventRegistrationService service;
 	
 	@Autowired
-	private EventRepository eventRepository;
+	private OrganizerRepository organizerRepository;
 	
+	@Autowired
+	private EventRepository eventRepository;
+
 	@AfterEach
 	public void clearDatabase() {
+		organizerRepository.deleteAll();
 		eventRepository.deleteAll();
 	}
 	
@@ -323,4 +329,150 @@ public class TestEvent {
 		assertEquals(name2, events.get(1).getName());
 		
 	}
+	
+	@Test
+	public void test_15_getAllEventsOrganizedByOrganizer() {
+		
+		assertEquals(0, service.getAllEvents().size());
+		
+		Organizer organizer = service.createOrganizer("Organizer Name");
+		
+		String name1 = "Event Name One";
+		Calendar c1 = Calendar.getInstance();
+	    c1.set(2020, Calendar.JUNE, 1);
+		Date date1 = new Date(c1.getTimeInMillis());
+		LocalTime startTime1 = LocalTime.parse("09:00");
+	    LocalTime endTime1 = LocalTime.parse("18:00");
+	    String description1 = "Event Description";
+	    
+	    Event event1 = service.createEvent(name1, date1, Time.valueOf(startTime1), Time.valueOf(endTime1), description1);
+	    
+	    String name2 = "Event Name Two";
+		Calendar c2 = Calendar.getInstance();
+	    c2.set(2020, Calendar.JUNE, 2);
+		Date date2 = new Date(c2.getTimeInMillis());
+		LocalTime startTime2 = LocalTime.parse("09:00");
+	    LocalTime endTime2 = LocalTime.parse("18:00");
+	    String description2 = "Event Description";
+	    
+	    Event event2 = service.createEvent(name2, date2, Time.valueOf(startTime2), Time.valueOf(endTime2), description2);
+	    
+	    assertEquals(2, service.getAllEvents().size());
+	    
+	    service.organizesEvent(organizer, event1);
+		service.organizesEvent(organizer, event2);
+		
+		assertEquals(2, organizer.getOrganizes().size());
+	    
+		try {
+			service.getAllEventsOrganizedByOrganizer(organizer);
+		} catch (IllegalArgumentException e) {
+			fail();
+		}
+		
+		List<Event> eventsOrganizedByOrganizer = service.getAllEventsOrganizedByOrganizer(organizer);
+		assertEquals(2, eventsOrganizedByOrganizer.size());
+		assertEquals(name1, eventsOrganizedByOrganizer.get(0).getName());
+		assertEquals(name2, eventsOrganizedByOrganizer.get(1).getName());
+
+	}
+	
+	@Test
+	public void test_16_getAllEventsOrganizedByOrganizer_Null() {
+		
+		assertEquals(0, service.getAllEvents().size());
+		String error = "";
+		
+		Organizer organizer = null;
+	    
+		try {
+			service.getAllEventsOrganizedByOrganizer(organizer);
+		} catch (IllegalArgumentException e) {
+			error = e.getMessage();
+		}
+		
+		assertEquals("Organizer must be selected", error);
+
+	}
+	
+	@Test
+	public void test_17_getAllEventsOrganizedByOrganizer_NonExistent() {
+		
+		assertEquals(0, service.getAllEvents().size());
+		String error = "";
+		
+		Organizer organizer = new Organizer();
+    	organizer.setName("Non Existent Organizer");
+	    
+		try {
+			service.getAllEventsOrganizedByOrganizer(organizer);
+		} catch (IllegalArgumentException e) {
+			error = e.getMessage();
+		}
+		
+		assertEquals("Organizer does not exist", error);
+
+	}
+
+	@Test
+	public void test_18_deleteEvent() {
+		
+		assertEquals(0, service.getAllEvents().size());
+		
+		String name = "Event Name";
+		Calendar c = Calendar.getInstance();
+	    c.set(2020, Calendar.JUNE, 1);
+		Date date = new Date(c.getTimeInMillis());
+		LocalTime startTime = LocalTime.parse("09:00");
+	    LocalTime endTime = LocalTime.parse("18:00");
+	    String description = "Event Description";
+	    
+	    service.createEvent(name, date, Time.valueOf(startTime), Time.valueOf(endTime), description);
+	    
+	    assertEquals(1, service.getAllEvents().size());
+		
+		try {
+			service.deleteEvent(name);
+		} catch (IllegalArgumentException e) {
+			fail();
+		}
+		
+		assertEquals(0, service.getAllEvents().size());
+		
+	}
+
+	@Test
+	public void test_19_deleteEvent_Null() {
+		
+		assertEquals(0, service.getAllEvents().size());
+		String error = "";
+		
+		try {
+			service.deleteEvent(null);
+		} catch (IllegalArgumentException e) {
+			error = e.getMessage();
+		}
+		
+		assertEquals("Event name cannot be empty", error);
+		assertEquals(0, service.getAllEvents().size());
+		
+	}
+
+	@Test
+	public void test_20_deleteEvent_NonExistent() {
+		
+		assertEquals(0, service.getAllEvents().size());
+		String error = "";
+		
+		try {
+			service.deleteEvent("Non Existent Event");
+		} catch (IllegalArgumentException e) {
+			error = e.getMessage();
+		}
+		
+		assertEquals("Event does not exist", error);
+		assertEquals(0, service.getAllEvents().size());
+		
+	}
+	
 }

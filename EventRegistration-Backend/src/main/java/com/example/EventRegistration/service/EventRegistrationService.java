@@ -265,7 +265,7 @@ public class EventRegistrationService {
 	}
 	
 	@Transactional
-	public List<Event> getAllEventsByOrganizer(Organizer organizer) {
+	public List<Event> getAllEventsOrganizedByOrganizer(Organizer organizer) {
 		
 		if(organizer == null) {
 			throw new IllegalArgumentException("Organizer must be selected");
