@@ -232,4 +232,59 @@ public class TestEvent {
 		
 	}
 	
+	@Test
+	public void test_08_getEvent() {
+		
+		assertEquals(0, service.getAllEvents().size());
+		
+		String name = "Event Name";
+		Calendar c = Calendar.getInstance();
+	    c.set(2020, Calendar.JUNE, 1);
+		Date date = new Date(c.getTimeInMillis());
+		LocalTime startTime = LocalTime.parse("09:00");
+	    LocalTime endTime = LocalTime.parse("18:00");
+	    String description = "Event Description";
+		
+		try {
+			service.createEvent(name, date, Time.valueOf(startTime), Time.valueOf(endTime), description);
+			service.getEvent(name);
+		} catch (IllegalArgumentException e) {
+			fail();
+		}
+		
+		assertEquals(1, service.getAllEvents().size());
+		
+	}
+	
+	@Test
+	public void test_09_getEvent_Null() {
+		
+		assertEquals(0, service.getAllEvents().size());
+		String error = "";
+		
+		try {
+			service.getEvent("");
+		} catch (IllegalArgumentException e) {
+			error = e.getMessage();
+		}
+		
+		assertEquals("Event name cannot be empty", error);
+		
+	}
+
+	@Test
+	public void test_10_getEvent_NonExistent() {
+		
+		assertEquals(0, service.getAllEvents().size());
+		String error = "";
+		
+		try {
+			service.getEvent("Non Existent Event");
+		} catch (IllegalArgumentException e) {
+			error = e.getMessage();
+		}
+		
+		assertEquals("Event does not exist", error);
+		
+	}
 }
