@@ -8,11 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.EventRegistration.dao.CreditCardRepository;
-import com.example.EventRegistration.dao.EventRepository;
-import com.example.EventRegistration.dao.OrganizerRepository;
 import com.example.EventRegistration.dao.PersonRepository;
-import com.example.EventRegistration.dao.RegistrationRepository;
 import com.example.EventRegistration.model.Person;
 
 @Service
@@ -21,26 +17,13 @@ public class EventRegistrationService {
 	@Autowired
 	private PersonRepository personRepository;
 	
-	@Autowired
-	private OrganizerRepository organizerRepository;
-	
-	@Autowired
-	private EventRepository eventRepository;
-	
-	@Autowired
-	private RegistrationRepository registrationRepository;
-	
-	@Autowired
-	private CreditCardRepository creditCardRepository;
-	
-	
 	/*** PERSON ***/
 	
 	@Transactional
 	public Person createPerson(String name) {
 		
 		if(name == null || name.trim().length() == 0 || name.replaceAll("//s", "").length() == 0 || name =="" ) {
-			throw new IllegalArgumentException("Please enter person name");
+			throw new IllegalArgumentException("Person name cannot be empty");
 		} else if(personRepository.existsById(name)) {
 			throw new IllegalArgumentException("Person already exists");
 		}
@@ -69,6 +52,17 @@ public class EventRegistrationService {
 		return toList(personRepository.findAll());
 	}
 	
+	@Transactional
+	public void deletePerson(String name) {
+		
+		if(name == null || name.trim().length() == 0 || name.replaceAll("//s", "").length() == 0 || name =="" ) {
+			throw new IllegalArgumentException("Please enter person name");
+		}
+		
+		Person person = personRepository.findByName(name);
+		personRepository.delete(person);
+		
+	}
 	
 	/*** ORGANIZER ***/
 	
