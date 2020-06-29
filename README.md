@@ -2,4 +2,4 @@
  
 Backend URL : https://eventregistration-backend-st.herokuapp.com/
 
-Frontend URL : 
+Frontend URL : [Coming Soon]
