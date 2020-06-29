@@ -8,6 +8,7 @@ import java.sql.Time;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -285,6 +286,41 @@ public class TestEvent {
 		}
 		
 		assertEquals("Event does not exist", error);
+		
+	}
+
+	@Test
+	public void test_11_getAllEvents() {
+		
+		assertEquals(0, service.getAllEvents().size());
+		
+		String name1 = "Event Name One";
+		Calendar c1 = Calendar.getInstance();
+	    c1.set(2020, Calendar.JUNE, 1);
+		Date date1 = new Date(c1.getTimeInMillis());
+		LocalTime startTime1 = LocalTime.parse("09:00");
+	    LocalTime endTime1 = LocalTime.parse("18:00");
+	    String description1 = "Event Description";
+	    
+	    String name2 = "Event Name Two";
+		Calendar c2 = Calendar.getInstance();
+	    c2.set(2020, Calendar.JUNE, 2);
+		Date date2 = new Date(c2.getTimeInMillis());
+		LocalTime startTime2 = LocalTime.parse("09:00");
+	    LocalTime endTime2 = LocalTime.parse("18:00");
+	    String description2 = "Event Description";
+		
+		try {
+			service.createEvent(name1, date1, Time.valueOf(startTime1), Time.valueOf(endTime1), description1);
+			service.createEvent(name2, date2, Time.valueOf(startTime2), Time.valueOf(endTime2), description2);
+		} catch (IllegalArgumentException e) {
+			fail();
+		}
+		
+		List<Event> events = service.getAllEvents();
+		assertEquals(2, events.size());
+		assertEquals(name1, events.get(0).getName());
+		assertEquals(name2, events.get(1).getName());
 		
 	}
 }
