@@ -15,9 +15,12 @@ import org.springframework.stereotype.Service;
 import com.example.EventRegistration.dao.EventRepository;
 import com.example.EventRegistration.dao.OrganizerRepository;
 import com.example.EventRegistration.dao.PersonRepository;
+import com.example.EventRegistration.dao.RegistrationRepository;
+
 import com.example.EventRegistration.model.Event;
 import com.example.EventRegistration.model.Organizer;
 import com.example.EventRegistration.model.Person;
+import com.example.EventRegistration.model.Registration;
 
 @Service
 public class EventRegistrationService {
@@ -30,6 +33,9 @@ public class EventRegistrationService {
 	
 	@Autowired
 	private EventRepository eventRepository;
+	
+	@Autowired
+	private RegistrationRepository registrationRepository;
 	
 	
 	
@@ -47,6 +53,7 @@ public class EventRegistrationService {
 		Person person = new Person();
 		person.setName(name);
 		personRepository.save(person);
+		
 		return person;
 		
 	}
@@ -61,6 +68,7 @@ public class EventRegistrationService {
 		}
 		
 		Person person = personRepository.findByName(name);
+		
 		return person;
 		
 	}
@@ -100,6 +108,7 @@ public class EventRegistrationService {
 		Organizer organizer = new Organizer();
 		organizer.setName(name);
 		organizerRepository.save(organizer);
+		
 		return organizer;
 		
 	}
@@ -114,6 +123,7 @@ public class EventRegistrationService {
 		}
 		
 		Person organizer = organizerRepository.findByName(name);
+		
 		return organizer;
 		
 	}
@@ -166,6 +176,7 @@ public class EventRegistrationService {
 		eventsOrganized.add(event);
 		organizer.setOrganizes(eventsOrganized);
 		organizerRepository.save(organizer);
+		
 		return organizer;
 		
 	}
@@ -203,6 +214,7 @@ public class EventRegistrationService {
 		
 	}
 	
+	@Transactional
 	public Event createEvent(String name, Date date, Time startTime, Time endTime, String description) {
 		
 		Event event = new Event();
@@ -212,6 +224,79 @@ public class EventRegistrationService {
 		return event;
 		
 	}
+	
+	@Transactional
+	public Event getEvent(String name) {
+		
+		if(name == null || name.trim().length() == 0  || name.replaceAll("\\s", "").length() == 0 || name == "") {
+			throw new IllegalArgumentException("Event name cannot be empty");
+		} else if(!eventRepository.existsById(name)) {
+			throw new IllegalArgumentException("Event does not exist");
+		}
+		
+		Event event = eventRepository.findByName(name);
+		
+		return event;
+		
+	}
+
+	@Transactional
+	public List<Event> getAllEvents() {
+		
+		return toList(eventRepository.findAll());
+	
+	}
+	
+	@Transactional
+	public List<Event> getAllEventsAttendedByPerson(Person person) {
+		
+		if(person == null) {
+			throw new IllegalArgumentException("Person must be selected");
+		} else if(!personRepository.existsById(person.getName())) {
+			throw new IllegalArgumentException("Person does not exist");
+		}
+		
+		List<Event> eventsAttendedByPerson = new ArrayList<>();
+		for(Registration r : registrationRepository.findByPerson(person)) {
+			eventsAttendedByPerson.add(r.getEvent());
+		}
+		
+		return eventsAttendedByPerson;
+	
+	}
+	
+	@Transactional
+	public List<Event> getAllEventsByOrganizer(Organizer organizer) {
+		
+		if(organizer == null) {
+			throw new IllegalArgumentException("Organizer must be selected");
+		} else if(!organizerRepository.existsById(organizer.getName())) {
+			throw new IllegalArgumentException("Organizer does not exist");
+		}
+		
+		List<Event> eventsOrganizedByOrganizer = new ArrayList<>();
+		for(Event e : organizer.getOrganizes()) {
+			eventsOrganizedByOrganizer.add(e);
+		}
+		
+		return eventsOrganizedByOrganizer;
+		
+	}
+	
+	@Transactional
+	public void deleteEvent(String name) {
+		
+		if(name == null || name.trim().length() == 0  || name.replaceAll("\\s", "").length() == 0 || name == "") {
+			throw new IllegalArgumentException("Event name cannot be empty");
+		} else if(!eventRepository.existsById(name)) {
+			throw new IllegalArgumentException("Event does not exist");
+		}
+		
+		Event event = eventRepository.findByName(name);
+		eventRepository.delete(event);
+	}
+	
+	
 	
 	/*** REGISTRATION ***/
 	
