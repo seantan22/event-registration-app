@@ -2,7 +2,7 @@ package com.example.EventRegistration.model;
 
 
 import java.sql.Time;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.DiscriminatorColumn;

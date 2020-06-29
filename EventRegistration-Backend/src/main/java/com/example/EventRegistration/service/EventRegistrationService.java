@@ -1,8 +1,8 @@
 package com.example.EventRegistration.service;
 
+import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +16,6 @@ import com.example.EventRegistration.dao.EventRepository;
 import com.example.EventRegistration.dao.OrganizerRepository;
 import com.example.EventRegistration.dao.PersonRepository;
 import com.example.EventRegistration.dao.RegistrationRepository;
-
 import com.example.EventRegistration.model.Event;
 import com.example.EventRegistration.model.Organizer;
 import com.example.EventRegistration.model.Person;
