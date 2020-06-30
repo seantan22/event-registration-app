@@ -3,12 +3,12 @@ package com.example.EventRegistration.dto;
 public class CreditCardDto {
 	
 	private String accountNumber;
-	private int amount;
+	private float amount;
 	
 	public CreditCardDto() {
 	}
 	
-	public CreditCardDto(String accountNumber, int amount) {
+	public CreditCardDto(String accountNumber, float amount) {
 		this.accountNumber = accountNumber;
 		this.amount = amount;
 	}
@@ -21,11 +21,11 @@ public class CreditCardDto {
 		return accountNumber;
 	}
 	
-	public void setAmount(int amount) {
+	public void setAmount(float amount) {
 		this.amount = amount;
 	}
 	
-	public int getAmount() {
+	public float getAmount() {
 		return amount;
 	}
 	
