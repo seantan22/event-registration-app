@@ -117,7 +117,7 @@ public class EventRegistrationService {
 	}
 	
 	@Transactional
-	public Person getOrganizer(String name) {
+	public Organizer getOrganizer(String name) {
 		
 		if(name == null || name.trim().length() == 0 || name.replaceAll("//s", "").length() == 0 || name == "" ) {
 			throw new IllegalArgumentException("Organizer name cannot be empty");
@@ -125,7 +125,7 @@ public class EventRegistrationService {
 			throw new IllegalArgumentException("Organizer does not exist");
 		}
 		
-		Person organizer = organizerRepository.findByName(name);
+		Organizer organizer = organizerRepository.findByName(name);
 		
 		return organizer;
 		
@@ -372,7 +372,7 @@ public class EventRegistrationService {
 	/*** CREDIT CARD ***/
 	
 	@Transactional
-	public CreditCard createCreditCardPayment(String accountNumber, int amount) {
+	public CreditCard createCreditCardPayment(String accountNumber, float amount) {
 		
 		CreditCard creditCardPayment = new CreditCard();
 		
