@@ -1,7 +1,7 @@
 # Event Registration App
  
- [Backend URL](https://eventregistration-backend-st.herokuapp.com/)
+[Backend URL](https://eventregistration-backend-st.herokuapp.com/)
 
-Frontend URL : [Coming Soon]
+[Frontend URL](https://eventregistration-frontend-st.herokuapp.com/)
 
 [Project Wiki](https://github.com/seantan22/event-registration-app/wiki)
