@@ -92,7 +92,6 @@ public class EventRegistrationService {
 	}
 	
 	
-	
 	/*** ORGANIZER ***/
 	
 	@Transactional
@@ -179,7 +178,6 @@ public class EventRegistrationService {
 		return organizer;
 		
 	}
-	
 	
 	
 	/*** EVENT ***/
@@ -296,7 +294,6 @@ public class EventRegistrationService {
 	}
 	
 	
-	
 	/*** REGISTRATION ***/
 	
 	@Transactional
@@ -319,6 +316,9 @@ public class EventRegistrationService {
 		registration.setPerson(person);
 		registration.setEvent(event);
 		registrationRepository.save(registration);
+		
+		event.setNumOfParticipants(event.getNumOfParticipants() + 1);
+		eventRepository.save(event);
 		
 		return registration;
 		
@@ -364,23 +364,20 @@ public class EventRegistrationService {
 	}
 	
 	@Transactional
-	public void deleteRegistration(Person person, Event event) {
+	public void deleteRegistration(Registration registration) {
 		
-		if(person == null) {
-			throw new IllegalArgumentException("Person must be selected");
-		} else if(!personRepository.existsById(person.getName())) {
-			throw new IllegalArgumentException("Person does not exist");
-		} else if(event == null) {
-			throw new IllegalArgumentException("Event must be selected");
-		} else if(!eventRepository.existsById(event.getName())) {
-			throw new IllegalArgumentException("Event does not exist");
+		if(registration == null) {
+			throw new IllegalArgumentException("Registration must be selected");
+		} else if(!registrationRepository.existsByPersonAndEvent(registration.getPerson(), registration.getEvent())) {
+			throw new IllegalArgumentException("Registration does not exist");
 		}
 		
-		Registration registration = registrationRepository.findByPersonAndEvent(person, event);
+//		event.setNumOfParticipants(event.getNumOfParticipants() - 1);
+//		eventRepository.save(event);
 		
 		registrationRepository.delete(registration);
+		
 	}
-	
 	
 	
 	/*** CREDIT CARD ***/
