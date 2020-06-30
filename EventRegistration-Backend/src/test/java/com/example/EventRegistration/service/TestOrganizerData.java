@@ -1,4 +1,4 @@
-package com.example.EventRegistration;
+package com.example.EventRegistration.service;
 
 import java.sql.Date;
 import java.sql.Time;

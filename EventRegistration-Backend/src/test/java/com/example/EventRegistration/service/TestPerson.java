@@ -1,4 +1,4 @@
-package com.example.EventRegistration;
+package com.example.EventRegistration.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

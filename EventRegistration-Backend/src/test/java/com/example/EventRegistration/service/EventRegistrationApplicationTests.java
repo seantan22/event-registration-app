@@ -1,4 +1,4 @@
-package com.example.EventRegistration;
+package com.example.EventRegistration.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
