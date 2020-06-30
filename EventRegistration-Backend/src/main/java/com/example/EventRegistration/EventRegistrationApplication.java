@@ -15,7 +15,7 @@ public class EventRegistrationApplication {
 
   @RequestMapping("/")
   public String greeting(){
-    return "Welcome to the backend base URL for the Event Registration Application. Use the API methods to interact with the backend.";
+    return "[This project is currently in progress] Welcome to the backend base URL for the Event Registration Application. Use the API methods to interact with the backend.";
   }
 
 }
