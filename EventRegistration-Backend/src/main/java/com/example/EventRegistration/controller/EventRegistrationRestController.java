@@ -1,12 +1,17 @@
 package com.example.EventRegistration.controller;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.EventRegistration.dto.CreditCardDto;
@@ -33,11 +38,81 @@ public class EventRegistrationRestController {
 	
 	@PostMapping(value = {"/persons/{name}", "/persons/{name}/"})
 	public PersonDto createPerson(@PathVariable("name") String name) throws IllegalArgumentException {
+		
 		Person person = service.createPerson(name);
+		
 		return convertToDto(person);
 	}
 	
+	@PostMapping(value = {"/organizers/{name}", "/organizers/{name}/"})
+	public OrganizerDto createOrganizer(@PathVariable("name") String name) throws IllegalArgumentException {
+		
+		Organizer organizer = service.createOrganizer(name);
+		
+		return convertToDto(organizer);
+	}
 	
+	@PostMapping(value = {"events/{name}", "/events/{name}/"})
+	public EventDto createEvent(@PathVariable("name") String name, 
+								@RequestParam(name = "date") Date date,
+								@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME, pattern = "HH:mm") LocalTime startTime,
+								@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME, pattern = "HH:mm") LocalTime endTime,
+								@RequestParam(name = "description") String description) 
+										throws IllegalArgumentException {
+		
+		Event event = service.createEvent(name, date, Time.valueOf(startTime), Time.valueOf(endTime), description);
+		
+		return convertToDto(event);
+	}
+	
+
+	@PostMapping(value = {"/register", "/register/"})
+	public RegistrationDto createRegistration(@RequestParam(name = "person") PersonDto personDto, 
+											  @RequestParam(name = "event") EventDto eventDto) 
+													  throws IllegalArgumentException {
+		
+		Person person = service.getPerson(personDto.getName());
+		Event event = service.getEvent(eventDto.getName());
+		
+		Registration registration = service.createRegistration(person, event);
+		
+		return convertToDto(registration, person, event);
+	}
+
+	@PostMapping(value = {"/assignOrganizer", "/assignOrganizer/"}) 
+	public OrganizerDto assignOrganizerToEvent(@RequestParam(name = "organizer") String organizerName,
+											   @RequestParam(name = "event") String eventName)
+													throws IllegalArgumentException {
+		
+		Organizer organizer = service.getOrganizer(organizerName);
+		Event event = service.getEvent(eventName);
+		
+		service.organizesEvent(organizer, event);
+		
+		return convertToDto(organizer);
+	}
+	
+	@PostMapping(value = {"/payment", "/payment/"})
+	public PersonDto createCreditCardPayment(@RequestParam(name = "accountNumber") String accountNumber,
+											 @RequestParam(name = "amount") float amount,
+											 @RequestParam(name = "person") String personName,
+											 @RequestParam(name = "event") String eventName) 
+													 throws IllegalArgumentException {
+		
+		Person person = service.getPerson(personName);
+		Event event = service.getEvent(eventName);
+		
+		Registration registration = service.getRegistrationByPersonAndEvent(person, event);
+		
+		CreditCard creditCard = service.createCreditCardPayment(accountNumber, amount);
+		
+		service.pay(registration, creditCard);
+		
+		PersonDto personDto = convertToDto(person);
+		
+		return personDto;
+		
+	}
 	
 	/*** CONVERT TO DTO ***/
 	
