@@ -363,22 +363,6 @@ public class EventRegistrationService {
 		
 	}
 	
-	@Transactional
-	public void deleteRegistration(Registration registration) {
-		
-		if(registration == null) {
-			throw new IllegalArgumentException("Registration must be selected");
-		} else if(!registrationRepository.existsByPersonAndEvent(registration.getPerson(), registration.getEvent())) {
-			throw new IllegalArgumentException("Registration does not exist");
-		}
-		
-//		event.setNumOfParticipants(event.getNumOfParticipants() - 1);
-//		eventRepository.save(event);
-		
-		registrationRepository.delete(registration);
-		
-	}
-	
 	
 	/*** CREDIT CARD ***/
 	
