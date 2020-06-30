@@ -19,6 +19,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.example.EventRegistration.dao.EventRepository;
 import com.example.EventRegistration.dao.OrganizerRepository;
+import com.example.EventRegistration.dao.PersonRepository;
+import com.example.EventRegistration.dao.RegistrationRepository;
 import com.example.EventRegistration.model.Event;
 import com.example.EventRegistration.model.Organizer;
 import com.example.EventRegistration.service.EventRegistrationService;
@@ -27,17 +29,25 @@ import com.example.EventRegistration.service.EventRegistrationService;
 @SpringBootTest
 public class TestEvent {
 	
-	@Autowired 
+	@Autowired
 	private EventRegistrationService service;
+	
+	@Autowired
+	private PersonRepository personRepository;
 	
 	@Autowired
 	private OrganizerRepository organizerRepository;
 	
 	@Autowired
 	private EventRepository eventRepository;
-
+	
+	@Autowired
+	private RegistrationRepository registrationRepository;
+	
 	@AfterEach
 	public void clearDatabase() {
+		registrationRepository.deleteAll();
+		personRepository.deleteAll();
 		organizerRepository.deleteAll();
 		eventRepository.deleteAll();
 	}
@@ -71,7 +81,7 @@ public class TestEvent {
 		assertEquals(startTime.format(timeFormat).toString(), event.getStartTime().toString());
 		assertEquals(endTime.format(timeFormat).toString(), event.getEndTime().toString());
 		assertEquals(description, event.getDescription());
-//		assertEquals(0, service.getAllRegistrations().size());
+		assertEquals(0, service.getAllRegistrations().size());
 		
 	}
 	

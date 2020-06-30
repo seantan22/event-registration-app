@@ -8,12 +8,14 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.example.EventRegistration.dao.EventRepository;
+import com.example.EventRegistration.dao.OrganizerRepository;
 import com.example.EventRegistration.dao.PersonRepository;
+import com.example.EventRegistration.dao.RegistrationRepository;
 import com.example.EventRegistration.model.Person;
 import com.example.EventRegistration.service.EventRegistrationService;
 
@@ -27,9 +29,21 @@ class TestPerson {
 	@Autowired
 	private PersonRepository personRepository;
 	
+	@Autowired
+	private OrganizerRepository organizerRepository;
+	
+	@Autowired
+	private EventRepository eventRepository;
+	
+	@Autowired
+	private RegistrationRepository registrationRepository;
+	
 	@AfterEach
 	public void clearDatabase() {
+		registrationRepository.deleteAll();
 		personRepository.deleteAll();
+		organizerRepository.deleteAll();
+		eventRepository.deleteAll();
 	}
 	
     @Test
