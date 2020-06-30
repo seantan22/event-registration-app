@@ -13,7 +13,6 @@ public class EventDto {
 	private CreditCardDto creditCardDto;
 	
 	public EventDto() {
-		
 	}
 	
 	public EventDto(String name) {
