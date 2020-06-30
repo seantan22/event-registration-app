@@ -25,7 +25,7 @@ export default {
   name: 'hello',
   data () {
     return {
-      msg: 'EVENT REGISTRATION APP'
+      msg: 'EVENT REGISTRATION APP!'
     }
   }
 }
