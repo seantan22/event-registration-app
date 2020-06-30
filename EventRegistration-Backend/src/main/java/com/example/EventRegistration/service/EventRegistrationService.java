@@ -399,7 +399,7 @@ public class EventRegistrationService {
 		
 		if(registration == null) {
 			throw new IllegalArgumentException("Registration cannot be empty");
-		} else if(!registrationRepository.existsById(Integer.toString(registration.getId()))) {
+		} else if(registrationRepository.findByPersonAndEvent(registration.getPerson(), registration.getEvent()) == null) {
 			throw new IllegalArgumentException("Registration does not exist");
 		} else if(creditCard == null) {
 			throw new IllegalArgumentException("Credit card cannot be empty");
