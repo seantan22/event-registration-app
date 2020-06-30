@@ -221,6 +221,30 @@ public class EventRegistrationRestController {
 		return convertToDto(creditCard);
 		
 	}
+	
+	
+	/*** DELETE MAPPINGS ***/
+	
+	@DeleteMapping(value = {"/persons/{name}", "/persons/{name}/"})
+	public void deletePerson(@PathVariable("name") String name) throws IllegalArgumentException {
+		
+		service.deletePerson(name);
+		
+	}
+	
+	@DeleteMapping(value = {"/organizers/{name}", "/organizers/{name}/"})
+	public void deleteOrganizer(@PathVariable("name") String name) throws IllegalArgumentException {
+		
+		service.deleteOrganizer(name);
+		
+	}
+	
+	@DeleteMapping(value = {"events/{name}", "/events/{name}/"})
+	public void deleteEvent(@PathVariable("name") String name) throws IllegalArgumentException {
+		
+		service.deleteEvent(name);
+		
+	}
 
 	
 	/*** CONVERT TO DTO ***/
