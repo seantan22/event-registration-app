@@ -4,4 +4,4 @@
 
 Frontend URL : [Coming Soon]
 
-Project Outline : https://github.com/seantan22/event-registration-app/wiki
+[Project Wiki](https://github.com/seantan22/event-registration-app/wiki)
