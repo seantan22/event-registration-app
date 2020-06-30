@@ -6,16 +6,19 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.EventRegistration.dao.CreditCardRepository;
 import com.example.EventRegistration.dao.EventRepository;
 import com.example.EventRegistration.dao.OrganizerRepository;
 import com.example.EventRegistration.dao.PersonRepository;
 import com.example.EventRegistration.dao.RegistrationRepository;
+import com.example.EventRegistration.model.CreditCard;
 import com.example.EventRegistration.model.Event;
 import com.example.EventRegistration.model.Organizer;
 import com.example.EventRegistration.model.Person;
@@ -36,6 +39,8 @@ public class EventRegistrationService {
 	@Autowired
 	private RegistrationRepository registrationRepository;
 	
+	@Autowired
+	private CreditCardRepository creditCardRepository;
 	
 	
 	/*** PERSON ***/
@@ -366,7 +371,46 @@ public class EventRegistrationService {
 	
 	/*** CREDIT CARD ***/
 	
-	
+	@Transactional
+	public CreditCard createCreditCardPayment(String accountNumber, int amount) {
+		
+		CreditCard creditCardPayment = new CreditCard();
+		
+		if(accountNumber == null || accountNumber.trim().length() == 0 || accountNumber.replaceAll("\\s", "").length() == 0) {
+			throw new IllegalArgumentException("Account number cannot be empty");
+		} else if(!Pattern.matches("^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$", accountNumber)) {
+			throw new IllegalArgumentException("Account number has wrong format");
+		} else if(creditCardRepository.existsById(accountNumber)) {
+			throw new IllegalArgumentException("Account number already exists");
+		} else if(amount <= 0) {
+			throw new IllegalArgumentException("Payment amount cannot be 0 or negative");
+		}
+		
+		creditCardPayment.setAccountNumber(accountNumber);
+		creditCardPayment.setAmount(amount);
+		creditCardRepository.save(creditCardPayment);
+		
+		return creditCardPayment;
+		
+	}
+
+	@Transactional
+	public void pay(Registration registration, CreditCard creditCard) {
+		
+		if(registration == null) {
+			throw new IllegalArgumentException("Registration cannot be empty");
+		} else if(!registrationRepository.existsById(Integer.toString(registration.getId()))) {
+			throw new IllegalArgumentException("Registration does not exist");
+		} else if(creditCard == null) {
+			throw new IllegalArgumentException("Credit card cannot be empty");
+		} else if(!creditCardRepository.existsById(creditCard.getAccountNumber())) {
+			throw new IllegalArgumentException("Credit card does not exist");
+		}
+		
+		registration.setCreditCard(creditCard);
+		registrationRepository.save(registration);
+		
+	}
 	
 	/*** HELPER METHODS ***/
 	
