@@ -16,6 +16,7 @@ var webpackConfig = (process.env.NODE_ENV === 'testing' || process.env.NODE_ENV 
 
 // default port where dev server listens for incoming traffic
 var port = process.env.PORT || config.dev.port
+var host = config.dev.host
 // automatically open browser, if not set will be false
 var autoOpenBrowser = !!config.dev.autoOpenBrowser
 // Define HTTP proxies to your custom API backend
@@ -66,7 +67,6 @@ var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsS
 app.use(staticPath, express.static('./static'))
 
 // var uri = 'http://localhost:' + port
-var host = config.dev.host
 var uri = 'http://' + host + ':' + port
 
 var _resolve
