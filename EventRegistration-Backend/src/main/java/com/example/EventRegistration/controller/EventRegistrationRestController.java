@@ -9,6 +9,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -114,6 +116,113 @@ public class EventRegistrationRestController {
 		
 	}
 	
+	
+	/*** GET MAPPINGS ***/
+	
+	@GetMapping(value = {"/persons/{name}", "/persons/{name}/"})
+	public PersonDto getPersonByName(@PathVariable("name") String name) throws IllegalArgumentException {
+		
+		return convertToDto(service.getPerson(name));
+		
+	}
+	
+	@GetMapping(value = {"/persons", "/persons/"})
+	public List<PersonDto> getAllPersons() {
+		
+		List<PersonDto> persons = new ArrayList<>();
+		for (Person person : service.getAllPersons()) {
+			persons.add(convertToDto(person));
+		}
+		
+		return persons;
+	}
+	
+	@GetMapping(value = {"/organizers/{name}", "/organizers/{name}/"})
+	public OrganizerDto getOrganizerByName(@PathVariable("name") String name) throws IllegalArgumentException {
+		
+		return convertToDto(service.getOrganizer(name));
+		
+	}
+	
+	@GetMapping(value = {"/organizers", "/organizers/"})
+	public List<OrganizerDto> getAllOrganizers() {
+		
+		List<OrganizerDto> organizers = new ArrayList<>();
+		for (Organizer organizer : service.getAllOrganizers()) {
+			organizers.add(convertToDto(organizer));
+		}
+		
+		return organizers;
+		
+	}
+	
+	@GetMapping(value = {"/events/{name}", "/events/{name}/"})
+	public EventDto getEventByName(@PathVariable("name") String name) throws IllegalArgumentException {
+		
+		return convertToDto(service.getEvent(name));
+		
+	}
+	
+	@GetMapping(value = {"/events", "/events/"})
+	public List<EventDto> getAllEvents() {
+		
+		List<EventDto> eventDtos = new ArrayList<>();
+		for (Event event : service.getAllEvents()) {
+			
+				eventDtos.add(convertToDto(event));
+		}
+		
+		return eventDtos;
+		
+	}
+
+	@GetMapping(value = { "/events/person/{name}", "/events/person/{name}/" })
+	public List<EventDto> getEventsOfPerson(@PathVariable("name") PersonDto personDto) {
+		
+		Person person = convertToDomainObject(personDto);
+		
+		return createAttendedEventDtosForPerson(person);
+	}
+	
+	@GetMapping(value = {"/registrations", "/registrations/"})
+	public RegistrationDto getRegistration(@RequestParam(name = "person") String personName,
+										   @RequestParam(name = "event") String eventName)
+												   throws IllegalArgumentException {
+		
+		Person person = service.getPerson(personName);
+		Event event = service.getEvent(eventName);
+		
+		Registration registration = service.getRegistrationByPersonAndEvent(person, event);
+		
+		return convertToDtoWithoutPerson(registration);
+		
+	}
+
+	@GetMapping(value = {"/registrations/person/{name}", "/registrations/person/{name}/"})
+	public List<RegistrationDto> getRegistrationsForPerson(@PathVariable("name") PersonDto personDto) throws IllegalArgumentException {
+		
+		Person person = service.getPerson(personDto.getName());
+		
+		return createRegistrationDtosForPerson(person);
+		
+	}
+	
+	@GetMapping(value = {"/registrations/creditCard", "/registrations/creditCard/"})
+	public CreditCardDto getCreditCardForRegistration(@RequestParam(name = "person") String personName,
+													  @RequestParam(name = "event") String eventName)
+															  throws IllegalArgumentException {
+		Person person = service.getPerson(personName);
+		Event event = service.getEvent(eventName);
+		
+		Registration registration = service.getRegistrationByPersonAndEvent(person, event);
+		
+		CreditCard creditCard = registration.getCreditCard();
+		
+		return convertToDto(creditCard);
+		
+	}
+
+	
 	/*** CONVERT TO DTO ***/
 	
 	private PersonDto convertToDto(Person person) {
@@ -202,6 +311,7 @@ public class EventRegistrationRestController {
 		return creditCardDto;
 	}
 	
+	
 	/*** HELPER METHODS ***/
 	
 	private List<EventDto> createAttendedEventDtosForPerson(Person person) {
@@ -219,6 +329,7 @@ public class EventRegistrationRestController {
 	}
 	
 	private List<RegistrationDto> createRegistrationDtosForPerson(Person person) {
+		
 		List<Registration> registrationsByPerson = service.getRegistrationsByPerson(person);
 		List<RegistrationDto> registrations = new ArrayList<RegistrationDto>();
 		for (Registration registration : registrationsByPerson) {
