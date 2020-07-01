@@ -2,33 +2,36 @@
 import axios from 'axios'
 var config = require('../../config')
 
-// var frontendUrl = 'http://' + config.dev.host + ':' + config.dev.port
+var frontendUrl = 'http://' + config.dev.host + ':' + config.dev.port
 var backendUrl = 'http://' + config.dev.backendHost + ':' + config.dev.backendPort
 
 var AXIOS = axios.create ({
     baseURL: backendUrl,
-    // headers: { 'Access-Control-Allow-Origin': frontendUrl }
+    headers: { 'Access-Control-Allow-Origin': frontendUrl }
 })
 
   export default {
       name: 'eventregistration',
       data() {
           return {
-              persons: [],
-              organizers: [],
-              events: [],
-              newPerson: '',
-              personType: 'Person',
-              newEvent: {
-                name: '',
-                description: '',
-                date: '2020-01-01',
-                startTime: '09:00',
-                endTime: '21:00',
-              },
-              errorPerson: '',
-              errorEvent: '',
-              response: [],
+            persons: [],
+            organizers: [],
+            events: [],
+            newPerson: '',
+            personType: 'Person',
+            newEvent: {
+            name: '',
+            description: '',
+            date: '2020-01-01',
+            startTime: '09:00',
+            endTime: '21:00',
+            },
+            selectedPersonR: '',
+            selectedEventR: '',
+            errorPerson: '',
+            errorEvent: '',
+            errorRegistration: '',
+            response: [],
           }
       },
       created: function() {
@@ -99,7 +102,6 @@ var AXIOS = axios.create ({
                     e = e.response.data.message ? e.response.data.message : e
                     this.newPerson = ''
                     this.errorPerson = e
-                    console.log(e);
                 });
             }
         },
@@ -110,7 +112,6 @@ var AXIOS = axios.create ({
             )
             .catch(e => {
                 var errorMessage = e.message
-                console.log(errorMessage)
                 this.errorPerson = errorMessage
             })
         },
@@ -134,9 +135,41 @@ var AXIOS = axios.create ({
             )
             .catch(e => {
                 var errorMessage = e.message
-                console.log(errorMessage)
                 this.errorEvent = errorMessage
             })
+        },
+        registerEvent: function (personName, eventName) {
+            let person = this.persons.find(x => x.name === personName);
+            let event = this.events.find(x => x.name === eventName);
+            let params = {
+              person: person.name,
+              event: event.name
+            };
+            AXIOS.post('/register', {}, {params: params})
+            .then(response => {
+              person.eventsAttended = response.data.person.eventsAttended;
+              this.selectedPersonR = '';
+              this.selectedEventR = '';
+              this.errorRegistration = '';
+            })
+            .catch(e => {
+              e = e.response.data.message ? e.response.data.message : e;
+              this.errorRegistration = e;
+            });
+        },
+        getRegistrations: function (personName) {
+            AXIOS.get('/events/person/'.concat(personName))
+            .then(response => {
+                if (!response.data || response.data.length <= 0) return;
+                let indexPart = this.persons.map(x => x.name).indexOf(personName);
+                this.persons[indexPart].eventsAttended = [];
+                response.data.forEach(event => {
+                    this.persons[indexPart].eventsAttended.push(event);
+                });
+            })
+            .catch(e => {
+              e = e.response.data.message ? e.response.data.message : e;
+            });
         },
       }
   }
