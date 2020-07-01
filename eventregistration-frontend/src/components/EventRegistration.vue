@@ -1,8 +1,8 @@
 <template>
     <b-container>
-        <h1> EVENT REGISTRATION</h1>
-        <b-row>
-            <b-col>
+        <h1 class="pt-4"> Event Registration </h1>
+        <b-row class="mt-4">
+            <b-col id="section" class="mx-2 p-4">
                 <h3> Registrations </h3>
                 <div>
                     <input type="text" v-model="newPerson" placeholder="Person Name">
@@ -15,7 +15,7 @@
                 <p>
                     <span v-if="errorPerson" style="color:red"> Error: {{errorPerson}} </span>
                 </p>
-                <div id="table-heading">
+                <div id="table-heading" class="pt-2">
                     <h5> Name </h5>
                     <h5> Events </h5>
                     <h5> Credit Card </h5>
@@ -32,20 +32,26 @@
                     </p>
                 </b-row> 
             </b-col>
-            <b-col>
+            <b-col id="section" class="mx-2 p-4">
                 <h3> Events </h3>
+                <div>
+                    <input type="text" placeholder="Event Name">
+                    <input type="text" placeholder="Description">
+                    <input type="date">
+                    <input type="time"> 
+                    <input type="time">
+                    <b-button variant="success" v-bind:disabled="!newEvent" @click=""> Create </b-button>
+                </div>
             </b-col>
         </b-row>
-        <b-row>
-            <b-col>
+        <b-row class="mt-3">
+            <b-col id="section" class="mx-2 p-4">
                 <h3> Assign Organizers </h3>
             </b-col>
-            <b-col>
+            <b-col id="section" class="mx-2 p-4">
                 <h3> Registrations </h3>
             </b-col>
-        </b-row>
-        <b-row>
-            <b-col>
+            <b-col id="section" class="mx-2 p-4">
                 <h3> Payment </h3>
             </b-col>
         </b-row>
@@ -56,15 +62,17 @@
 
 </script>
 <style>
+    #section {
+        border: 3px solid;
+        border-radius: 20px;
+    }
     #table-data:hover {
         background-color: #ddd;
     }
     #table-heading {
         display: flex;
         justify-content: space-around;
-        vertical-align: bottom;
         background-color: #C0E0DE;
-        margin-top: 10px;
     }
     #table-data {
         display: flex;
