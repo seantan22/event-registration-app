@@ -28,20 +28,38 @@
                     <p> xxxx-xxxx-xxxx-xxxx</p>
                     <p> $xxx.xx</p>
                     <p>
-                    <b-button variant="danger" size="sm" @click="deletePerson(person.name)"> X </b-button>
+                        <b-button variant="danger" size="sm" @click="deletePerson(person.name)"> X </b-button>
                     </p>
                 </b-row> 
             </b-col>
             <b-col id="section" class="mx-2 p-4">
                 <h3> Events </h3>
                 <div>
-                    <input type="text" placeholder="Event Name">
-                    <input type="text" placeholder="Description">
-                    <input type="date">
-                    <input type="time"> 
-                    <input type="time">
-                    <b-button variant="success" v-bind:disabled="!newEvent" @click=""> Create </b-button>
+                    <input type="text" v-model="newEvent.name" placeholder="Event Name">
+                    <input type="text" v-model="newEvent.description" placeholder="Description">
+                    <input type="date" v-model="newEvent.date">
+                    <input type="time" v-model="newEvent.startTime"> 
+                    <input type="time" v-model="newEvent.endTime">
+                    <b-button variant="success" v-bind:disabled="!newEvent.name" @click="createEvent(newEvent)"> Create </b-button>
                 </div>
+                <div id="table-heading" class="pt-2">
+                    <h5> Name </h5>
+                    <h5> Description </h5>
+                    <h5> Date </h5>
+                    <h5> Start Time </h5>
+                    <h5> End Time </h5>
+                    <h5> </h5>
+                </div>
+                <b-row id="table-data" v-for="(event, index) in events" v-bind:key="event.index" :key="index">
+                    <p> {{ event.name }} </p>
+                    <p> {{ event.description }} </p>
+                    <p> {{ event.date }} </p>
+                    <p> {{ event.startTime }} </p>
+                    <p> {{ event.endTime }} </p>
+                    <p>
+                        <b-button variant="danger" size="sm" @click="deleteEvent(event.name)"> X </b-button>
+                    </p>
+                </b-row> 
             </b-col>
         </b-row>
         <b-row class="mt-3">
@@ -49,10 +67,10 @@
                 <h3> Assign Organizers </h3>
             </b-col>
             <b-col id="section" class="mx-2 p-4">
-                <h3> Registrations </h3>
+                <h3> Register </h3>
             </b-col>
             <b-col id="section" class="mx-2 p-4">
-                <h3> Payment </h3>
+                <h3> Record Payment </h3>
             </b-col>
         </b-row>
     </b-container>

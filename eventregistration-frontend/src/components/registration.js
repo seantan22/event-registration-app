@@ -16,9 +16,18 @@ var AXIOS = axios.create ({
           return {
               persons: [],
               organizers: [],
+              events: [],
               newPerson: '',
               personType: 'Person',
+              newEvent: {
+                name: '',
+                description: '',
+                date: '2020-01-01',
+                startTime: '09:00',
+                endTime: '21:00',
+              },
               errorPerson: '',
+              errorEvent: '',
               response: [],
           }
       },
@@ -38,9 +47,16 @@ var AXIOS = axios.create ({
           .catch(e => {
               this.errorPerson = e
           });
+          AXIOS.get('/events')
+          .then(response => {
+              this.events = response.data
+          })
+          .catch(e => {
+              this.errorEvent = e
+          })
       },
       methods: {
-        getPersons: function() {
+        reload: function() {
             AXIOS.get('/persons')
             .then(response => {
                 this.persons = response.data
@@ -48,6 +64,13 @@ var AXIOS = axios.create ({
             .catch(e => {
                 this.errorPerson = e
             });
+            AXIOS.get('/events')
+            .then(response => {
+                this.events = response.data
+            })
+            .catch(e => {
+                this.errorEvent = e
+            })
         },
         createPerson: function(personType, personName) {
             if(personType == "Person") {
@@ -83,13 +106,37 @@ var AXIOS = axios.create ({
         deletePerson: function(personName) {
             AXIOS.delete('/persons/'.concat(personName))
             .then(
-                this.getPersons
+                this.reload
             )
             .catch(e => {
                 var errorMessage = e.message
                 console.log(errorMessage)
                 this.errorPerson = errorMessage
             })
-        }
+        },
+        createEvent: function(newEvent) {
+            AXIOS.post('/events/'.concat(newEvent.name), {}, {params: newEvent})
+            .then(response => {
+                this.events.push(response.data)
+                this.errorEvent = ''
+                this.newEvent.name = ''
+                this.newEvent.description = ''
+            })
+            .catch(e => {
+                e = e.response.data.message ? e.response.data.message : e
+                this.errorEvent = e
+            }) 
+        },
+        deleteEvent: function(event) {
+            AXIOS.delete('/events/'.concat(event))
+            .then(
+                this.reload
+            )
+            .catch(e => {
+                var errorMessage = e.message
+                console.log(errorMessage)
+                this.errorEvent = errorMessage
+            })
+        },
       }
   }
