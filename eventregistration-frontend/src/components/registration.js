@@ -15,33 +15,81 @@ var AXIOS = axios.create ({
       data() {
           return {
               persons: [],
+              organizers: [],
               newPerson: '',
+              personType: 'Person',
               errorPerson: '',
-              response: []
+              response: [],
           }
       },
       created: function() {
           AXIOS.get('/persons')
           .then(response => {
               this.persons = response.data
+              console.log(this.persons)
+          })
+          .catch(e => {
+              this.errorPerson = e
+          });
+          AXIOS.get('/organizers')
+          .then(response => {
+              this.organizers = response.data
           })
           .catch(e => {
               this.errorPerson = e
           });
       },
       methods: {
-          createPerson: function(personName) {
-              AXIOS.post('/persons/'.concat(personName), {}, {})
-              .then(response => {
-                  this.persons.push(response.data)
-                  this.newPerson = ''
-                  this.errorPerson = ''
-              })
-              .catch(e => {
-                  var errorMessage = e.message
-                  console.log(errorMsg)
-                  this.errorPerson = errorMessage
-              });
-          }
+        getPersons: function() {
+            AXIOS.get('/persons')
+            .then(response => {
+                this.persons = response.data
+            })
+            .catch(e => {
+                this.errorPerson = e
+            });
+        },
+        createPerson: function(personType, personName) {
+            if(personType == "Person") {
+                AXIOS.post('/persons/'.concat(personName), {}, {})
+                .then(response => {
+                    this.persons.push(response.data)
+                    this.errorPerson = ''
+                    this.newPerson = ''
+                })
+                .catch(e => {
+                    e = e.response.data.message ? e.response.data.message : e
+                    this.newPerson = ''
+                    this.errorPerson = e
+                    console.log(e);
+                });
+            }
+            if(personType == "Organizer") {
+                AXIOS.post('/organizers/'.concat(personName), {}, {})
+                .then(response => {
+                    this.persons.push(response.data)
+                    this.organizers.push(response.data)
+                    this.errorPerson = ''
+                    this.newPerson = ''
+                })
+                .catch(e => {
+                    e = e.response.data.message ? e.response.data.message : e
+                    this.newPerson = ''
+                    this.errorPerson = e
+                    console.log(e);
+                });
+            }
+        },
+        deletePerson: function(personName) {
+            AXIOS.delete('/persons/'.concat(personName))
+            .then(
+                this.getPersons
+            )
+            .catch(e => {
+                var errorMessage = e.message
+                console.log(errorMessage)
+                this.errorPerson = errorMessage
+            })
+        }
       }
   }
