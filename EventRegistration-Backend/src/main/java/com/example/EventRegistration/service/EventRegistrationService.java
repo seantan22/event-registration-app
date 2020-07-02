@@ -412,6 +412,15 @@ public class EventRegistrationService {
 		
 	}
 	
+	@Transactional
+	public void clearAll() {
+		registrationRepository.deleteAll();
+		personRepository.deleteAll();
+		organizerRepository.deleteAll();
+		eventRepository.deleteAll();
+		creditCardRepository.deleteAll();
+	}
+	
 	/*** HELPER METHODS ***/
 	
 	private <T> List<T> toList(Iterable<T> iterable) {
