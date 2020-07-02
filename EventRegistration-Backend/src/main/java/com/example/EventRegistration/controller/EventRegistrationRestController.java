@@ -245,6 +245,11 @@ public class EventRegistrationRestController {
 		service.deleteEvent(name);
 		
 	}
+	
+	@DeleteMapping(value= {"/clearAll", "/clearAll/"})
+	public void clearAll() throws IllegalArgumentException {
+		service.clearAll();
+	}
 
 	
 	/*** CONVERT TO DTO ***/
