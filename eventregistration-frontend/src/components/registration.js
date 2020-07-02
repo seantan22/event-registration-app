@@ -93,14 +93,14 @@ var AXIOS = axios.create ({
             if(personType == "Person") {
                 AXIOS.post('/persons/'.concat(personName), {}, {})
                 .then(response => {
-                    this.persons.push(response.data)
-                    this.errorPerson = ''
-                    this.newPerson = ''
+                    this.persons.push(response.data);
+                    this.errorPerson = '';
+                    this.newPerson = '';
                 })
                 .catch(e => {
-                    e = e.response.data.message ? e.response.data.message : e
-                    this.newPerson = ''
-                    this.errorPerson = e
+                    e = e.response.data.message ? e.response.data.message : e;
+                    this.newPerson = '';
+                    this.errorPerson = e;
                     console.log(e);
                 });
             }
@@ -144,6 +144,9 @@ var AXIOS = axios.create ({
         },
         deleteEvent: function(event) {
             AXIOS.delete('/events/'.concat(event))
+            .then(
+                this.reload
+            )
             .catch(e => {
                 var errorMessage = e.message
                 this.errorEvent = errorMessage
@@ -194,8 +197,7 @@ var AXIOS = axios.create ({
             };
             AXIOS.post('/payment?accountNumber=' + this.accountNumber + '&amount=' + this.amount, {}, {params: params})
             .then(response => {
-                let person = this.persons.find(x => x.name === person.name);
-                persons.eventsAttended[person.eventsAttended.length-1].creditCard = response.data.eventsAttended[response.data.eventsAttended.length-1].creditCard;
+                person.eventsAttended[person.eventsAttended.length-1].creditCard = response.data.person.eventsAttended[response.data.person.eventsAttended.length-1].creditCard;
                 this.accountNumber = '';
                 this.amount = '';
                 this.selectedPersonCC = '';
@@ -206,26 +208,6 @@ var AXIOS = axios.create ({
                 this.accountNumber = '';
                 this.amount = '';
                 this.errorPayment = e.response.data.message ? e.response.error.message : e;
-            });
-        },
-        getPayment: function (personName, eventName) {
-            let person = this.persons.find(x => x.name === personName)
-            let event = this.events.find(x => x.name === eventName)
-            let params = {
-                person: person.name,
-                event: event.name
-            };
-            AXIOS.get('/registrations/creditCard', {}, {params: params})
-            .then(response => {
-                let indexPart = this.persons.map(x => x.name).indexOf(personName);
-                this.persons[indexPart].eventsPaid = [];
-                response.data.forEach(creditCard => {
-                    this.persons[indexPart].eventsPaid.push(creditCard);
-                })
-            })
-            .catch(e => {
-                e = e.response.data.message ? e.response.data.message : e;
-                this.errorPayment = e;
             });
         },
         clearAll: function () {
