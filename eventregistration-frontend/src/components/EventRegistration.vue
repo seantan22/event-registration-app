@@ -1,6 +1,11 @@
 <template>
     <b-container>
         <h1 class="pt-4"> Event Registration </h1>
+         <b-row class="mt-1 d-flex justify-content-end">
+             <b-button variant="danger" size="sm" @click="clearAll()">
+                    Reset All
+                </b-button>
+        </b-row>
         <b-row class="mt-3">
             <b-col id="section" class="mx-2 p-4">
                 <h3> Registrations </h3>
@@ -27,8 +32,12 @@
                     <p v-for="(event, index) in person.eventsAttended" v-bind:key="person.index">
                         <span> {{event.name}} </span>
                     </p>
-                    <p> xxxx-xxxx-xxxx-xxxx</p>
-                    <p> $xxx.xx</p>
+                    <p v-for="(event, index) in person.eventsAttended" v-bind:key="person.index">
+                        <span> {{event.creditCard != null ? event.creditCard.accountNumber : ""}} </span>
+                    </p>
+                    <p v-for="(event, index) in person.eventsAttended" v-bind:key="person.index">
+                        <span> {{event.creditCard != null ? event.creditCard.amount : ""}} </span>
+                    </p>
                     <p>
                         <b-button variant="danger" size="sm" @click="deletePerson(person.name)"> X </b-button>
                     </p>
@@ -137,11 +146,12 @@
                     <input type="text" v-model="accountNumber" placeholder="1234-1234-1234-1234">
                 </label>
                 <label> Amount:
-                    <input type="float" v-model="amount" placeholder="$000.00">
+                    <input type="float" v-model="amount" placeholder="000.00">
                 </label>
                 <b-button variant="success" size="sm" v-bin:disabled="!selectedPersonCC || !selectedEventCC || !accountNumber || !amount" @click="recordPayment(selectedPersonCC, selectedEventCC)">
                     Record
                 </b-button>
+                 <span v-if="errorPayment" style="color:red">Error: {{errorPayment}}</span>
             </b-col>
         </b-row>
     </b-container>
