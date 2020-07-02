@@ -26,10 +26,13 @@ var AXIOS = axios.create ({
             startTime: '09:00',
             endTime: '21:00',
             },
+            selectedOrganizer: '',
+            selectedEventA: '',
             selectedPersonR: '',
             selectedEventR: '',
             errorPerson: '',
             errorEvent: '',
+            errorAssign: '',
             errorRegistration: '',
             response: [],
           }
@@ -38,7 +41,7 @@ var AXIOS = axios.create ({
           AXIOS.get('/persons')
           .then(response => {
               this.persons = response.data
-              console.log(this.persons)
+              this.persons.forEach(person => this.getRegistrations(person.name))
           })
           .catch(e => {
               this.errorPerson = e
@@ -63,6 +66,14 @@ var AXIOS = axios.create ({
             AXIOS.get('/persons')
             .then(response => {
                 this.persons = response.data
+                this.persons.forEach(person => this.getRegistrations(person.name))
+            })
+            .catch(e => {
+                this.errorPerson = e
+            });
+            AXIOS.get('/organizers')
+            .then(response => {
+                this.organizers = response.data
             })
             .catch(e => {
                 this.errorPerson = e
@@ -137,6 +148,23 @@ var AXIOS = axios.create ({
                 var errorMessage = e.message
                 this.errorEvent = errorMessage
             })
+        },
+        organizeEvent: function (personName, eventName){
+            let organizer = this.organizers.find(x => x.name === personName);
+            let event = this.events.find(x => x.name === eventName);
+            let params = {
+                organizer: organizer.name,
+                event: event.name
+            };
+            AXIOS.post('/assignOrganizer', {}, {params: params})
+            .then(response => {
+                this.selectedOrganizer = '';
+                this.selectedEventA = '';
+            })
+            .catch(e => {
+                e = e.response.data.message ? e.response.data.message : e;
+                this.errorAssign = e;
+            });
         },
         registerEvent: function (personName, eventName) {
             let person = this.persons.find(x => x.name === personName);
