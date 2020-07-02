@@ -20,20 +20,25 @@ var AXIOS = axios.create ({
             newPerson: '',
             personType: 'Person',
             newEvent: {
-            name: '',
-            description: '',
-            date: '2020-01-01',
-            startTime: '09:00',
-            endTime: '21:00',
+                name: '',
+                description: '',
+                date: '2020-01-01',
+                startTime: '09:00',
+                endTime: '21:00',
             },
             selectedOrganizer: '',
             selectedEventA: '',
             selectedPersonR: '',
             selectedEventR: '',
+            selectedPersonCC: '',
+            selectedEventCC: '',
+            accountNumber: '',
+            amount: '',
             errorPerson: '',
             errorEvent: '',
             errorAssign: '',
             errorRegistration: '',
+            errorPayment: '',
             response: [],
           }
       },
@@ -41,7 +46,6 @@ var AXIOS = axios.create ({
           AXIOS.get('/persons')
           .then(response => {
               this.persons = response.data
-              this.persons.forEach(person => this.getRegistrations(person.name))
           })
           .catch(e => {
               this.errorPerson = e
@@ -66,7 +70,6 @@ var AXIOS = axios.create ({
             AXIOS.get('/persons')
             .then(response => {
                 this.persons = response.data
-                this.persons.forEach(person => this.getRegistrations(person.name))
             })
             .catch(e => {
                 this.errorPerson = e
@@ -141,9 +144,6 @@ var AXIOS = axios.create ({
         },
         deleteEvent: function(event) {
             AXIOS.delete('/events/'.concat(event))
-            .then(
-                this.reload
-            )
             .catch(e => {
                 var errorMessage = e.message
                 this.errorEvent = errorMessage
@@ -185,19 +185,58 @@ var AXIOS = axios.create ({
               this.errorRegistration = e;
             });
         },
-        getRegistrations: function (personName) {
-            AXIOS.get('/events/person/'.concat(personName))
+        recordPayment: function(personName, eventName) {
+            let person = this.persons.find(x => x.name === personName)
+            let event = this.events.find(x => x.name === eventName)
+            let params = {
+                person: person.name,
+                event: event.name
+            };
+            AXIOS.post('/payment?accountNumber=' + this.accountNumber + '&amount=' + this.amount, {}, {params: params})
             .then(response => {
-                if (!response.data || response.data.length <= 0) return;
-                let indexPart = this.persons.map(x => x.name).indexOf(personName);
-                this.persons[indexPart].eventsAttended = [];
-                response.data.forEach(event => {
-                    this.persons[indexPart].eventsAttended.push(event);
-                });
+                let person = this.persons.find(x => x.name === person.name);
+                persons.eventsAttended[person.eventsAttended.length-1].creditCard = response.data.eventsAttended[response.data.eventsAttended.length-1].creditCard;
+                this.accountNumber = '';
+                this.amount = '';
+                this.selectedPersonCC = '';
+                this.selectedEventCC = '';
+                this.errorPayment = '';
             })
-            .catch(e => {
-              e = e.response.data.message ? e.response.data.message : e;
+            .catch( e => {
+                this.accountNumber = '';
+                this.amount = '';
+                this.errorPayment = e.response.data.message ? e.response.error.message : e;
             });
         },
+        getPayment: function (personName, eventName) {
+            let person = this.persons.find(x => x.name === personName)
+            let event = this.events.find(x => x.name === eventName)
+            let params = {
+                person: person.name,
+                event: event.name
+            };
+            AXIOS.get('/registrations/creditCard', {}, {params: params})
+            .then(response => {
+                let indexPart = this.persons.map(x => x.name).indexOf(personName);
+                this.persons[indexPart].eventsPaid = [];
+                response.data.forEach(creditCard => {
+                    this.persons[indexPart].eventsPaid.push(creditCard);
+                })
+            })
+            .catch(e => {
+                e = e.response.data.message ? e.response.data.message : e;
+                this.errorPayment = e;
+            });
+        },
+        clearAll: function () {
+            AXIOS.delete('/clearAll', {}, {})
+            .then(
+                this.reload
+            )
+            .catch( e => {
+                var errorMessage = e.message
+                this.errorEvent = errorMessage
+            });
+        }
       }
   }
