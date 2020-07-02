@@ -67,6 +67,28 @@
         <b-row class="mt-3">
             <b-col id="section" class="mx-2 p-4">
                 <h3> Assign Organizers </h3>
+                <label>Organizer:
+                    <select v-model="selectedOrganizer">
+                        <option disabled value="">Please select one...</option>
+                        <option v-for="(organizer, index) in organizers" v-bind:key="organizer.index" :key="index">
+                            {{organizer.name}}
+                        </option>
+                    </select>
+                </label>
+                <label>Event:
+                    <select v-model="selectedEventA">
+                        <option disabled value="">Please select one...</option>
+                        <option v-for="(event, index) in events" v-bind:key="event.index" :key="index">
+                            {{event.name}}
+                        </option>
+                    </select>
+                </label>
+                <div>
+                    <b-button variant="success" size="sm" v-bind:disabled="!selectedOrganizer || !selectedEventA" @click="organizeEvent(selectedOrganizer, selectedEventA)">
+                        Assign
+                    </b-button>
+                </div>
+                <span v-if="errorRegistration" style="color:red">Error: {{errorRegistration}}</span>
             </b-col>
             <b-col id="section" class="mx-2 p-4">
                 <h3> Register </h3>
@@ -95,6 +117,31 @@
             </b-col>
             <b-col id="section" class="mx-2 p-4">
                 <h3> Record Payment </h3>
+                <label>Person:
+                    <select v-model="selectedPersonCC">
+                        <option disabled value="">Please select one...</option>
+                        <option v-for="(person, index) in persons" v-bind:key="person.index" :key="index">
+                            {{person.name}}
+                        </option>
+                    </select>
+                </label>
+                <label> Event:
+                    <select v-model="selectedEventCC">
+                        <option disabled value="">Please select one...</option>
+                        <option v-for="(event, index) in events" v-bind:key="event.index" :key="index">
+                            {{event.name}}
+                        </option>
+                    </select>
+                </label>
+                <label> Account Number:
+                    <input type="text" v-model="accountNumber" placeholder="1234-1234-1234-1234">
+                </label>
+                <label> Amount:
+                    <input type="float" v-model="amount" placeholder="$000.00">
+                </label>
+                <b-button variant="success" size="sm" v-bin:disabled="!selectedPersonCC || !selectedEventCC || !accountNumber || !amount" @click="recordPayment(selectedPersonCC, selectedEventCC)">
+                    Record
+                </b-button>
             </b-col>
         </b-row>
     </b-container>
